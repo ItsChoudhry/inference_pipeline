@@ -73,3 +73,8 @@ def add_task(task: CreateTask, idempotency_key: Optional[str] = None):
 @app.get("/v1/tasks/{task_id}")
 def get_task(task_id: str, q: Union[str, None] = None):
     return tasks[task_id]
+
+
+@app.get("/v1/models")
+def list_models():
+    return {"ChatBpd": ["0.1.0"], "Cloudsunut": ["0.2.1"]}
