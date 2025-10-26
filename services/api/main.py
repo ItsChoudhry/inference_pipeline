@@ -67,7 +67,7 @@ def add_task(task: CreateTask, idempotency_key: Optional[str] = None):
         updated_at=now,
     )
     tasks[idem_key] = new_task
-    return generated_id
+    return idem_key
 
 
 @app.get("/v1/tasks/{task_id}")
