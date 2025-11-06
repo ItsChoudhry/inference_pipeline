@@ -7,6 +7,7 @@ requires-python = ">=3.13"
 dependencies = [
     "fastapi>=0.119.0",
     "mypy>=1.18.2",
+    "openapi>=2.0.0",
     "pydantic>=2.12.2",
     "uvicorn>=0.37.0",
 ]
