@@ -23,3 +23,7 @@ class CreateTask(BaseModel):
     param: dict[str, str]
     inputs: dict[str, str]
     callback_url: Optional[str] = None
+
+
+# Tmp to replace with db later
+tasks: dict[str, Task] = {}
