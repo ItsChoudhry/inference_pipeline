@@ -11,7 +11,7 @@ rate_limit_map: dict[str, tuple[int, datetime]] = {}
 
 def check_rate(x_api_key: str = Header(...)):
     now = datetime.now(timezone.utc)
-    LIMIT = 3
+    LIMIT = 10
     WINDOW = 60
 
     if x_api_key in rate_limit_map:
