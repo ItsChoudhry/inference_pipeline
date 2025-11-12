@@ -3,11 +3,41 @@ from typing import Optional, Union
 import uuid
 from ..auth import require_api_key
 from ..models.task import CreateTask, Task, tasks
-from fastapi import APIRouter, Depends, Header
+from fastapi import APIRouter, Depends, HTTPException, Header
 from fastapi.responses import JSONResponse
 
+rate_limit_map: dict[str, tuple[int, datetime]] = {}
+
+
+def check_rate(x_api_key: str = Header(...)):
+    now = datetime.now(timezone.utc)
+    LIMIT = 3
+    WINDOW = 60
+
+    if x_api_key in rate_limit_map:
+        count, last_time = rate_limit_map[x_api_key]
+        elapsed = (now - last_time).total_seconds()
+
+        if elapsed > WINDOW:
+            count = 0
+        else:
+            count += 1
+    else:
+        count = 1
+
+    rate_limit_map[x_api_key] = (count, now)
+
+    if count > LIMIT:
+        retry_after = int(WINDOW - elapsed)
+        raise HTTPException(
+            status_code=429,
+            detail="Rate limit exceeded",
+            headers={"Retry-After": str(retry_after)},
+        )
+
+
 protected_router = APIRouter(
-    dependencies=[Depends(require_api_key)], tags=["protected"]
+    dependencies=[Depends(require_api_key), Depends(check_rate)], tags=["protected"]
 )
 
 idempotency_map: dict[str, str] = {}
@@ -17,6 +47,7 @@ idempotency_map: dict[str, str] = {}
 def add_task(
     task: CreateTask,
     idempotency_key: Optional[str] = Header(None, alias="Idempotency-Key"),
+    x_api_key: Optional[str] = Header(None, alias="X-API-KEY"),
 ):
     if idempotency_key and idempotency_key in idempotency_map:
         task_id = idempotency_map[idempotency_key]
