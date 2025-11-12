@@ -1,6 +1,6 @@
-# Inference task pipeline api
+# Inference task api
 
-This project is to showcase building a end to end api for inference tasks based on what I think goes into building a api. It's less so a data pipeline where you that the classic ETL structure and more a demostration of building a API using commonly used libraries like fastapi and so on.
+This project is to showcase building a end to end api for inference tasks based on what I think goes into building a api. A demostration of building a API using commonly used libraries like fastapi and so on.
 
 ## How To Run
 
